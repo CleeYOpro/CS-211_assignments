@@ -1,4 +1,4 @@
-package Deck_Console;
+package Cards_Console.src;
 
 /**
  * The Card class allows us to create cards with a Suit and a Rank

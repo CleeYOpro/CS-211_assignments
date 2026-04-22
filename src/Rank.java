@@ -1,4 +1,4 @@
-package Deck_Console;
+package Cards_Console.src;
 
 /**
  * Contains the Ranks of Cards, Names, and Values

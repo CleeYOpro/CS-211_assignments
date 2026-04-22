@@ -1,4 +1,4 @@
-package Deck_Console;
+package Cards_Console.src;
 
 /**
  * Used for shared logic between the dealer and player

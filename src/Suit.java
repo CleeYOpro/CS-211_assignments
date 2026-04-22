@@ -1,4 +1,4 @@
-package Deck_Console;
+package Cards_Console.src;
 
 /**
  * Contains the suits of a Card, Names

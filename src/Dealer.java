@@ -1,4 +1,4 @@
-package Deck_Console;
+package Cards_Console.src;
 
 /**
  * Handles all Dealer specific operations
