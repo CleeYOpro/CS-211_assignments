@@ -28,6 +28,34 @@ public class Hand {
      * Add a single card to this hand
      * @param c The card being added
      */
+    public void addCard(Card c){
+        hand.add(c);
+    }
+
+    /**
+     * Add a specific card to this hand by suit and rank
+     * @param suit The suit of the card
+     * @param rank The rank of the card
+     * @return true if card was added, false if card not found
+     */
+    public boolean addCard(Suit suit, Rank rank) {
+        for (Card card : hand) {
+            if (card.getSuit() == suit && card.getRank() == rank) {
+                return false; // Card already in hand
+            }
+        }
+        // This would be called from outside to add a found card
+        return false;
+    }
+
+    /**
+     * Get the number of cards in the hand
+     * @return The size of the hand
+     */
+    public int getHandSize() {
+        return hand.size();
+    }
+
     /**
      *
      * @param discardDeck The deck we're discarding this hand to

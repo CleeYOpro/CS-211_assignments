@@ -2,6 +2,8 @@ package Cards_Console.src;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -148,5 +150,41 @@ public class Deck {
         System.out.println("Ran out of cards, creating new deck from discard pile & shuffling deck.");
     }
 
+    /**
+     * Divide the deck into 4 ArrayLists, one for each suit
+     * @return A Map with Suit as key and ArrayList<Card> as value
+     */
+    public Map<Suit, ArrayList<Card>> divideBySuit() {
+        Map<Suit, ArrayList<Card>> suits = new HashMap<>();
+        
+        // Initialize each suit with an empty ArrayList
+        for (Suit suit : Suit.values()) {
+            suits.put(suit, new ArrayList<Card>());
+        }
+        
+        // Distribute each card to the appropriate suit list
+        for (Card card : deck) {
+            Suit cardSuit = card.getSuit();
+            suits.get(cardSuit).add(card);
+        }
+        
+        return suits;
+    }
+
+    /**
+     * Remove a specific card from the deck by suit and rank
+     * @param suit The suit of the card to find
+     * @param rank The rank of the card to find
+     * @return The Card if found, null otherwise
+     */
+    public Card removeCard(Suit suit, Rank rank) {
+        for (int i = 0; i < deck.size(); i++) {
+            Card card = deck.get(i);
+            if (card.getSuit() == suit && card.getRank() == rank) {
+                return deck.remove(i);
+            }
+        }
+        return null;
+    }
 
 }
