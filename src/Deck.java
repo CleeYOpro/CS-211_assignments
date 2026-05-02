@@ -11,7 +11,7 @@ import java.util.Random;
  */
 public class Deck {
 
-    //An arraylist to hold the deck of Cards
+    //An arraylist to hold the deck of Cardsij
     private ArrayList<Card> deck;
 
 

@@ -1,151 +1,202 @@
 package Cards_Console.src;
+
+import java.util.*;
+
 /**
- * Contains all Game logic
+ * Main game class
  */
 public class Game {
 
-    //Declare variables needed for Game class
-    private Deck deck, discarded;
+    private Map<String, Set<Card>> stuff;
+    private Deck d;
 
-    private Dealer dealer;
-    private Player player;
-    private int wins, losses, pushes;
-
-
-
-    /**
-     * Constructor for Game, creates our variables and starts the Game
-     */
-    public Game(){
-
-        //Create a new deck with 52 cards
-        deck = new Deck(true);
-        //Create a new empty deck
-        discarded = new Deck();
-
-        //Create the People
-        dealer = new Dealer();
-        player = new Player();
-
-
-        //Shuffle the deck and start the first round
-        deck.shuffle();
-        startRound();
+    public Game() {
+        stuff = new HashMap<>();
+        d = new Deck(true);
     }
 
+    /**
+     * initialize game
+     */
+    public void initialize() {
+        d = new Deck(true);
+        d.shuffle();
+
+        stuff.put("P1", new HashSet<>());
+        stuff.put("P2", new HashSet<>());
+        stuff.put("P3", new HashSet<>());
+        stuff.put("P4", new HashSet<>());
+
+        deal(7);
+    }
 
     /**
-     * Start a new round, display score, give out cards, check for BlackJack, ask player what they want to do
+     * this is a bit hacky but I wanted to reuse the hit method from Person
+     * deal cards
      */
-    private void startRound(){
-/*        wins = 0; losses = 0; pushes = 1;
-        Card testCard = new Card(Suit.CLUB,Rank.NINE);
-        Card testCard2 = new Card(Suit.CLUB, Rank.TEN);*/
-        //If this isn't the first time, display the users score and put their cards back in the deck
-        if(wins>0 || losses>0 || pushes > 0){
-            System.out.println();
-            System.out.println("Starting Next Round... Wins: " + wins + " Losses: "+ losses+ " Pushes: "+pushes);
-            dealer.getHand().discardHandToDeck(discarded);
-            player.getHand().discardHandToDeck(discarded);
-        }
-
-        //Check to make sure the deck has at least 4 cards left
-        if(deck.cardsLeft() < 4){
-            deck.reloadDeckFromDiscard(discarded);
-        }
-
-        //Give the dealer two cards
-        dealer.getHand().takeCardFromDeck(deck);
-        dealer.getHand().takeCardFromDeck(deck);
-
-        //Give the player two cards
-        player.getHand().takeCardFromDeck(deck);
-        player.getHand().takeCardFromDeck(deck);
-
-/*        //TEST
-        player.getHand().addCard(testCard);
-        player.getHand().addCard(testCard2);*/
-
-        //Show the dealers hand with one card face down
-        dealer.printFirstHand();
-
-        //Show the player's hand
-        player.printHand();
-
-        //Check if dealer has BlackJack to start
-        if(dealer.hasBlackjack()){
-            //Show the dealer has BlackJack
-            dealer.printHand();
-
-            //Check if the player also has BlackJack
-            if(player.hasBlackjack()){
-                //End the round with a push
-                System.out.println("You both have 21 - Push.");
-                pushes++;
-                startRound();
+    private void deal(int n){
+        for(String p : stuff.keySet()){
+            for(int i = 0; i < n; i++){
+                if(d.getCards().size() > 0){
+                    stuff.get(p).add(d.takeCard());
+                }
             }
-            else{
-                System.out.println("Dealer has BlackJack. You lose.");
-                dealer.printHand();
-                losses++;
-                startRound();
+        }
+    }
+
+    /**
+     * show hands
+     */
+    public void show(){
+        for(String p : stuff.keySet()){
+            System.out.println(p + " -> " + stuff.get(p));
+        }
+    }
+
+    /**
+     * common ranks
+     */
+    public void commonRanks(){
+        Set<Rank> x = null;
+
+        for(String p : stuff.keySet()){
+            Set<Rank> temp = new HashSet<>();
+
+            for(Card c : stuff.get(p)){
+                temp.add(c.getRank());
+            }
+
+            if(x == null){
+                x = new HashSet<>(temp);
+            } else {
+                x.retainAll(temp);
             }
         }
 
-        //Check if player has blackjack to start
-        //If we got to this point, we already know the dealer didn't have blackjack
-        if(player.hasBlackjack()){
-            System.out.println("You have Blackjack! You win!");
-            wins++;
-            startRound();
-        }
-
-        //Let the player decide what to do next
-        player.makeDecision(deck, discarded);
-
-        //Check if they busted
-        if(player.getHand().calculatedValue() > 21){
-            System.out.println("You have gone over 21.");
-            losses ++;
-            startRound();
-        }
-
-        //Now it's the dealer's turn
-        dealer.printHand();
-        while(dealer.getHand().calculatedValue()<17){
-            dealer.hit(deck, discarded);
-        }
-
-        //Check who wins
-        if(dealer.getHand().calculatedValue()>21){
-            System.out.println("Dealer busts");
-            wins++;
-        }
-        else if(dealer.getHand().calculatedValue() > player.getHand().calculatedValue()){
-            System.out.println("You lose.");
-            losses++;
-        }
-        else if(player.getHand().calculatedValue() > dealer.getHand().calculatedValue()){
-            System.out.println("You win.");
-            wins++;
-        }
-        else{
-            System.out.println("Push.");
-            pushes++;
-        
-        }
-
-        //Start a new round
-        startRound();
+        System.out.println(x == null || x.isEmpty() ? "none" : x);
     }
 
+    /**
+     * common suits
+     */
+    public void commonSuits(){
+        Set<Suit> s = null;
 
-public static void pause(){
-    try {
-        Thread.sleep(2000);
-    } catch (InterruptedException e) {
-        e.printStackTrace();
+        for(String p : stuff.keySet()){
+            Set<Suit> temp = new HashSet<>();
+
+            for(Card c : stuff.get(p)){
+                temp.add(c.getSuit());
+            }
+
+            if(s == null){
+                s = new HashSet<>(temp);
+            } else {
+                s.retainAll(temp);
+            }
+        }
+
+        System.out.println(s == null || s.isEmpty() ? "none" : s);
     }
-}
 
+    /**
+     * find missing card
+     */
+    public void missing(){
+        Set<Card> all = new HashSet<>();
+
+        for(String p : stuff.keySet()){
+            all.addAll(stuff.get(p));
+        }
+
+        Card miss = null;
+
+        for(Suit s : Suit.values()){
+            for(Rank r : Rank.values()){
+                Card c = new Card(s,r);
+
+                if(!all.contains(c)){
+                    miss = c;
+                    break;
+                }
+            }
+            if(miss != null) break;
+        }
+
+        System.out.println(miss == null ? "none missing" : miss);
+    }
+
+    /**
+     * search cards
+     */
+    public void search(){
+        Card[] arr = {
+            new Card(Suit.HEART, Rank.ACE),
+            new Card(Suit.SPADE, Rank.KING),
+            new Card(Suit.CLUB, Rank.TEN)
+        };
+
+        for(Card target : arr){
+            System.out.println("looking for " + target);
+
+            for(String p : stuff.keySet()){
+                if(stuff.get(p).contains(target)){
+                    System.out.println("found in " + p);
+                } else {
+                    System.out.println("nope " + p);
+                }
+            }
+        }
+    }
+
+    /**
+     * totals
+     */
+    public void totals(){
+        String lowP = null, highP = null;
+        int low = 999999, high = -1;
+
+        for(String p : stuff.keySet()){
+            int t = 0;
+
+            for(Card c : stuff.get(p)){
+                t += c.getValue();
+            }
+
+            System.out.println(p + ": " + t);
+
+            if(t < low){
+                low = t;
+                lowP = p;
+            }
+
+            if(t > high){
+                high = t;
+                highP = p;
+            }
+        }
+
+        System.out.println("low " + lowP + " " + low);
+        System.out.println("high " + highP + " " + high);
+    }
+
+    /**
+     * run game
+     */
+    public void run(){
+        initialize();
+        show();
+        commonRanks();
+        commonSuits();
+        missing();
+        search();
+        totals();
+    }
+
+    /**
+     * main
+     */
+    public static void main(String[] args){
+        new Game().run();
+    }
 }

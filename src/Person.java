@@ -52,7 +52,6 @@ public abstract class Person {
         this.hand.takeCardFromDeck(deck);
         System.out.println(this.name + " gets a card");
         this.printHand();
-        Game.pause();
 
     }
 

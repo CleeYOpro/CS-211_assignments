@@ -1,5 +1,7 @@
 package Cards_Console.src;
 
+import java.util.Objects;
+
 /**
  * The Card class allows us to create cards with a Suit and a Rank
  * It contains the methods needed to get the value of the card
@@ -75,5 +77,24 @@ public class Card implements Comparable<Card>{
         else{
             return 0;
         }
+    }
+    
+    /**
+     * Override equals to compare cards by suit and rank
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Card other = (Card) obj;
+        return this.suit == other.suit && this.rank == other.rank;
+    }
+    
+    /**
+     * Override hashCode to be consistent with equals
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(suit, rank);
     }
 }
