@@ -1,142 +1,149 @@
 package Deck_console;
 
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        System.out.println("Welcome to BlackJack.");
-        System.out.println();
-
         Deck deck = new Deck(true);
-        System.out.println("Original full deck (" + deck.cardsLeft() + " cards):");
-        System.out.println(deck);
-        ArrayList<Card> clubs = new ArrayList<>();
-        ArrayList<Card> diamonds = new ArrayList<>();
-        ArrayList<Card> hearts = new ArrayList<>();
-        ArrayList<Card> spades = new ArrayList<>();
+        deck.shuffle();
 
-        while (deck.hasCards()) {
+        Map<String, HashSet<Card>> hands = new HashMap<>();
+        hands.put("Player 1", new HashSet<>());
+        hands.put("Player 2", new HashSet<>());
+        hands.put("Player 3", new HashSet<>());
+        hands.put("Player 4", new HashSet<>());
 
-            Card current = deck.takeCard();
+        String[] playerNames = { "Player 1", "Player 2", "Player 3", "Player 4" };
 
-            if (current.getSuit() == Suit.CLUB) {
-                clubs.add(current);
-            }
-
-            else if (current.getSuit() == Suit.DIAMOND) {
-                diamonds.add(current);
-            }
-
-            else if (current.getSuit() == Suit.HEART) {
-                hearts.add(current);
-            }
-
-            else if (current.getSuit() == Suit.SPADE) {
-                spades.add(current);
-            }
-        }
-
-        System.out.println();
-        System.out.println("Cards separated by suit:");
-        printCards("Clubs ♣", clubs);
-        printCards("Diamonds ♦", diamonds);
-        printCards("Hearts ♥", hearts);
-        printCards("Spades ♠", spades);
-
-        ArrayList<Card> hand = new ArrayList<>();
-
-        Scanner input = new Scanner(System.in);
-
-        System.out.println();
-        System.out.println("Pick a card to move into your hand.");
-        System.out.println("Example: Ace Hearts");
-        System.out.print("Enter card: ");
-
-        String rankInput = input.next();
-        String suitInput = input.next();
-
-        Rank chosenRank = null;
-        Suit chosenSuit = null;
-
-        for (Rank r : Rank.values()) {
-
-            if (r.toString().equalsIgnoreCase(rankInput) || r.name().equalsIgnoreCase(rankInput)) {
-                chosenRank = r;
-            }
-        }
-
-        for (Suit s : Suit.values()) {
-
-            if (s.toString().equalsIgnoreCase(suitInput) || s.name().equalsIgnoreCase(suitInput)) {
-                chosenSuit = s;
-            }
-        }
-
-        ArrayList<Card> correctList = null;
-
-        if (chosenSuit == Suit.CLUB) {
-            correctList = clubs;
-        }
-
-        else if (chosenSuit == Suit.DIAMOND)
-        {
-            correctList = diamonds;
-        }
-
-        else if (chosenSuit == Suit.HEART) 
-        {
-            correctList = hearts;
-        }
-
-        else if (chosenSuit == Suit.SPADE) {
-            correctList = spades;
-        }
-
-        Card pickedCard = null;
-
-        if (correctList != null) {
-            for (Card c : correctList) {
-                if (c.getRank() == chosenRank) {
-                    pickedCard = c;
+        for (int i = 0; i < 7; i++) {
+            for (String playerName : playerNames) {
+                if (deck.hasCards()) {
+                    hands.get(playerName).add(deck.takeCard());
                 }
             }
-        }  
-        
+        }
 
-        if (pickedCard != null) {
-
-            correctList.remove(pickedCard);
-            hand.add(pickedCard);
+        System.out.println("=== PLAYER HANDS ===\n");
+        for (String playerName : playerNames) {
+            System.out.println(playerName + ": " + hands.get(playerName));
             System.out.println();
-            System.out.println(pickedCard + " added tohand.");
         }
 
-        else {
-
-            System.out.println();
-            System.out.println("Card not found.");
+        Set<Rank> commonRanks = new HashSet<>(Arrays.asList(Rank.values()));
+        for (String playerName : playerNames) {
+            Set<Rank> playerRanks = new HashSet<>();
+            for (Card card : hands.get(playerName)) {
+                playerRanks.add(card.getRank());
+            }
+            commonRanks.retainAll(playerRanks);
         }
+        System.out.println("Card ranks in all hands: " + commonRanks + "\n");
+
+        Set<Suit> commonSuits = new HashSet<>(Arrays.asList(Suit.values()));
+
+        for (String name : playerNames) {
+            Set<Suit> suits = new HashSet<>();
+
+            for (Card c : hands.get(name)) {
+                suits.add(c.getSuit());
+            }
+
+            commonSuits.retainAll(suits);
+        }
+
+        System.out.println("Common suits: " + commonSuits);
         System.out.println();
-        System.out.println("Updated Lists:");
 
-        printCards("Clubs ♣", clubs);
-        printCards("Diamonds ♦", diamonds);
-        printCards("Hearts ♥", hearts);
-        printCards("Spades ♠", spades);
+        Set<Card> usedCards = new HashSet<>();
 
-        printCards("Hand", hand);
-    }
+        for (String name : playerNames) {
+            usedCards.addAll(hands.get(name));
+        }
 
-    public static void printCards(String title, ArrayList<Card> cards) {
+        Card missingCard = null;
+
+        for (Suit s : Suit.values()) {
+            for (Rank r : Rank.values()) {
+
+                Card temp = new Card(s, r);
+                boolean exists = false;
+
+                for (Card c : usedCards) {
+                    if (c.getSuit() == temp.getSuit() &&
+                            c.getRank() == temp.getRank()) {
+
+                        exists = true;
+                        break;
+                    }
+                }
+
+                if (!exists) {
+                    missingCard = temp;
+                    break;
+                }
+            }
+
+            if (missingCard != null) {
+                break;
+            }
+        }
+
+        System.out.println("Missing card: " + missingCard);
+        System.out.println();
+
+        Card target = new Card(Suit.HEART, Rank.KING);
+
+        System.out.println("Searching for " + target);
+
+        for (String name : playerNames) {
+
+            boolean found = false;
+
+            for (Card c : hands.get(name)) {
+                if (c.getSuit() == target.getSuit() &&
+                        c.getRank() == target.getRank()) {
+
+                    found = true;
+                    break;
+                }
+            }
+
+            System.out.println(name + " has it: " + found);
+        }
 
         System.out.println();
-        System.out.println(title + ":");
 
-        for (Card c : cards) {
-            System.out.println(c);
+        int highest = Integer.MIN_VALUE;
+        int lowest = Integer.MAX_VALUE;
+
+        String highPlayer = "";
+        String lowPlayer = "";
+
+        for (String name : playerNames) {
+
+            int total = 0;
+
+            for (Card c : hands.get(name)) {
+                total += c.getValue();
+            }
+
+            System.out.println(name + " total: " + total);
+
+            if (total > highest) {
+                highest = total;
+                highPlayer = name;
+            }
+
+            if (total < lowest) {
+                lowest = total;
+                lowPlayer = name;
+            }
         }
+
+        System.out.println();
+        System.out.println("Highest hand value: " + highPlayer + " with " + highest + " points");
+        System.out.println("Lowest hand value: " + lowPlayer + " with " + lowest + " points");
     }
 }
