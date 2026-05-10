@@ -32,7 +32,7 @@ public class Game {
 
     /**
      * this is a bit hacky but I wanted to reuse the hit method from Person
-     * deal cards
+     * deal cards.
      */
     private void deal(int n){
         for(String p : stuff.keySet()){
@@ -41,6 +41,7 @@ public class Game {
                     stuff.get(p).add(d.takeCard());
                 }
             }
+            
         }
     }
 
