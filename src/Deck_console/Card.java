@@ -1,5 +1,7 @@
 package Deck_console;
 
+import java.util.Objects;
+
 /**
  * The Card class allows us to create cards with a Suit and a Rank
  * It contains the methods needed to get the value of the card
@@ -75,5 +77,18 @@ public class Card implements Comparable<Card>{
         else{
             return 0;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Card)) return false;
+        Card card = (Card) o;
+        return suit == card.suit && rank == card.rank;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(suit, rank);
     }
 }

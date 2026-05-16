@@ -1,4 +1,4 @@
-
+package Deck_console;
 import java.util.*;
 
 public class Main {
@@ -17,6 +17,7 @@ public class Main {
         String[] playerNames = { "Player 1", "Player 2", "Player 3", "Player 4" };
 
         for (int i = 0; i < 7; i++) {
+
             for (String playerName : playerNames) {
                 if (deck.hasCards()) {
                     hands.get(playerName).add(deck.takeCard());
