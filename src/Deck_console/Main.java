@@ -6,6 +6,29 @@ public class Main {
     public static void main(String[] args) {
 
         Deck deck = new Deck(true);
+
+        System.out.println("=== FULL DECK ===");
+        System.out.println(deck);
+
+        deck.selectionSort();
+        System.out.println("=== SORTED BY SUIT THEN RANK (selection sort) ===");
+        System.out.println(deck);
+
+        Card target = new Card(Suit.HEART, Rank.KING);
+        int sortedIndex = deck.binarySearch(target);
+        System.out.println("Binary search for " + target + ": " + (sortedIndex >= 0 ? "found at index " + sortedIndex : "not found"));
+
+        deck.shuffle();
+        System.out.println("=== SHUFFLED DECK ===");
+        System.out.println(deck);
+
+        int sequentialIndex = deck.sequentialSearch(target);
+        System.out.println("Sequential search for " + target + ": " + (sequentialIndex >= 0 ? "found at index " + sequentialIndex : "not found"));
+
+        deck.insertionSort();
+        System.out.println("=== SORTED BY SUIT THEN RANK (insertion sort) ===");
+        System.out.println(deck);
+
         deck.shuffle();
 
         Map<String, HashSet<Card>> hands = new HashMap<>();
@@ -92,8 +115,6 @@ public class Main {
 
         System.out.println("Missing card: " + missingCard);
         System.out.println();
-
-        Card target = new Card(Suit.HEART, Rank.KING);
 
         System.out.println("Searching for " + target);
 

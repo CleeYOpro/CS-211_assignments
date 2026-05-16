@@ -25,7 +25,19 @@ public class Deck {
      * @param c deck being copied
      */
     public Deck(Deck c){
-        Collections.copy(this.deck, c.getCards());
+        deck = new ArrayList<>(c.getCards());
+    }
+
+    /**
+     * Build a standard deck of cards.
+     */
+    public void buildDeck(){
+        deck.clear();
+        for(Suit suit : Suit.values()){
+            for(Rank rank : Rank.values()){
+                deck.add(new Card(suit, rank));
+            }
+        }
     }
 
     /**
@@ -35,14 +47,7 @@ public class Deck {
     public Deck(boolean makeDeck){
         deck = new ArrayList<Card>();
         if(makeDeck){
-            //Go through all the suits
-            for(Suit suit : Suit.values()){
-                //Go through all the ranks
-                for(Rank rank : Rank.values()){
-                    //add a new card containing each iterations suit and rank
-                    deck.add(new Card(suit, rank));
-                }
-            }
+            buildDeck();
         }
     }
 
@@ -128,6 +133,10 @@ public class Deck {
         return deck;
     }
 
+    public Card getCard(int index) {
+        return deck.get(index);
+    }
+
     /**
      * Empties out this Deck
      */
@@ -135,12 +144,70 @@ public class Deck {
         deck.clear();
     }
 
+    /**
+     * Sort the deck using selection sort.
+     */
+    public void selectionSort(){
+        int n = deck.size();
+        for (int i = 0; i < n - 1; i++) {
+            int minIndex = i;
+            for (int j = i + 1; j < n; j++) {
+                if (deck.get(j).compareTo(deck.get(minIndex)) < 0) {
+                    minIndex = j;
+                }
+            }
+            if (minIndex != i) {
+                Card temp = deck.get(i);
+                deck.set(i, deck.get(minIndex));
+                deck.set(minIndex, temp);
+            }
+        }
+    }
 
     /**
-     * Take all the cards from a discarded deck and place them in this deck, shuffled.
-     * Clear the old deck
-     * @param discard - the deck we're getting the cards from
+     * Sort the deck using insertion sort.
      */
+    public void insertionSort(){
+        for (int i = 1; i < deck.size(); i++) {
+            Card key = deck.get(i);
+            int j = i - 1;
+            while (j >= 0 && deck.get(j).compareTo(key) > 0) {
+                deck.set(j + 1, deck.get(j));
+                j--;
+            }
+            deck.set(j + 1, key);
+        }
+    }
+
+
+    public int sequentialSearch(Card target){
+        for (int i = 0; i < deck.size(); i++) {
+            if (deck.get(i).equals(target)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+
+    public int binarySearch(Card target){
+        int low = 0;
+        int high = deck.size() - 1;
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            Card midCard = deck.get(mid);
+            int cmp = midCard.compareTo(target);
+            if (cmp == 0) {
+                return mid;
+            }
+            if (cmp < 0) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        return -1;
+    }
     public void reloadDeckFromDiscard(Deck discard){
         this.addCards(discard.getCards());
         this.shuffle();

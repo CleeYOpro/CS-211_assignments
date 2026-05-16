@@ -51,6 +51,16 @@ public class Card implements Comparable<Card>{
         return rank;
     }
 
+    private int getSuitOrder() {
+        switch (suit) {
+            case CLUB: return 0;
+            case DIAMOND: return 1;
+            case HEART: return 2;
+            case SPADE: return 3;
+            default: return 0;
+        }
+    }
+
     /**
      *
      * @return The Card as a readable string
@@ -67,16 +77,14 @@ public class Card implements Comparable<Card>{
      */
     @Override
     public int compareTo(Card c) {
-        //if this card is greater than the other card
-        if(this.getValue() > c.getValue()){
-            return 1;
+        // Sort by suit first, then by rank value within the suit.
+        if (this.getSuitOrder() != c.getSuitOrder()) {
+            return Integer.compare(this.getSuitOrder(), c.getSuitOrder());
         }
-        else if(this.getValue() < c.getValue()){
-            return -1;
+        if (this.getValue() != c.getValue()) {
+            return Integer.compare(this.getValue(), c.getValue());
         }
-        else{
-            return 0;
-        }
+        return Integer.compare(this.rank.ordinal(), c.rank.ordinal());
     }
 
     @Override
