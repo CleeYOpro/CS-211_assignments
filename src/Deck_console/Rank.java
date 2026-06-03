@@ -1,7 +1,7 @@
 package Deck_console;
 
 /**
- * Contains the Ranks of Cards, Names, and Values
+ * contains all the ranks i used
  */
 public enum Rank {
     ACE("Ace", 11),

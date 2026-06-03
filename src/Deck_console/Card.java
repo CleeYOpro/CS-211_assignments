@@ -12,37 +12,20 @@ public class Card implements Comparable<Card>{
      private Suit suit;
      private Rank rank;
 
-    /**
-     *
-     * @param suit  The Suit of the card to be created
-     * @param rank  The Rank of the card to be created
-     */
     public Card(Suit suit, Rank rank){
         this.suit = suit;
         this.rank = rank;
     }
 
-    /**
-     * Copy constructor
-     * @param card the card being copied
-     */
     public Card(Card card){
         this.suit = card.getSuit();
         this.rank = card.getRank();
     }
 
-    /**
-     *
-     * @return  The numerical value of the Card
-     */
+    
     public int getValue(){
         return rank.rankValue;
     }
-
-    /**
-     *
-     * @return The suit of the Card.
-     */
     public Suit getSuit(){
         return suit;
     }
@@ -60,11 +43,7 @@ public class Card implements Comparable<Card>{
             default: return 0;
         }
     }
-
-    /**
-     *
-     * @return The Card as a readable string
-     */
+    
     public String toString(){
         return ("["+rank+" of "+ suit + "] ("+this.getValue()+")");
 
@@ -72,8 +51,6 @@ public class Card implements Comparable<Card>{
 
     /**
      * Compare a card to another card, returning 1 if this is higher, -1 if this is lower, in case we want to sort cards
-     * @param c
-     * @return
      */
     @Override
     public int compareTo(Card c) {

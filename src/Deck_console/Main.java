@@ -48,7 +48,7 @@ public class Main {
             }
         }
 
-        System.out.println("=== PLAYER HANDS ===\n");
+        System.out.println("--- PLAYER HANDS ---\n");
         for (String playerName : playerNames) {
             System.out.println(playerName + ": " + hands.get(playerName));
             System.out.println();
